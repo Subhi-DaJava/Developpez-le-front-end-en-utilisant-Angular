@@ -1,3 +1,32 @@
 <h2>Olympic games app</h2>
 <hr />
-<p>{{ (olympics$ | async)?.length }} data loaded</p>
+<!-- <p>{{ olympics$ | async | json }} data loaded</p> -->
+<p *ngIf="errorMessage">
+    {{errorMessage}}
+</p>
+
+<div *ngFor="let participation of olympics$ | async">
+    <table>
+        <thead>
+            <tr>
+                <th>Country Name</th>
+                <th>Participation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+
+                <td>{{ participation.country }}</td>
+                <td>
+            <tr *ngFor="let pts of participation.participations">
+                <td>Year of Participation: {{pts.year}}</td>,
+                <td>City of Olympicis: {{pts.city}}</td>,
+                <td>Total medals: {{pts.medalsCount}}</td>,
+                <td>Total athletes: {{pts.athleteCount}}</td>
+            </tr>
+            </td>
+            </tr>
+
+        </tbody>
+    </table>
+</div>
