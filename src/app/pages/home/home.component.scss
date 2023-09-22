@@ -1,0 +1,36 @@
+.olympic {
+    box-sizing: border-box;
+    width: 50%;
+    margin: 30px auto;
+    padding: 10px 30px;
+    box-shadow: lightgray 4px 4px 20px;
+
+    .section {
+        display: flex;
+        font-weight: 500;
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+
+    .article {
+        box-sizing: border-box;
+        border: solid 1px;
+        width: 30%;
+        margin: auto;
+        margin-bottom: 20px;
+        padding-left: 30px;
+
+    }
+
+    header {
+        margin-bottom: 50px;
+        text-align: center;
+    }
+
+    .myChart {
+        margin: auto;
+        box-sizing: border-box;
+        width: 50%;
+    }
+
+}
