@@ -1,0 +1,6 @@
+<div>
+    <p>{{ olympicCountry.country }}</p>
+    <div *ngFor="let item of olympicCountry.participations">
+        <div>id: {{ item.id }}, year: {{ item.year }}, city: {{ item.city }}, medalsCount: {{ item.medalsCount }}, athleteCount: {{ item.athleteCount }} </div>
+    </div>
+</div>
