@@ -1,7 +1,7 @@
 import { OlympicCountry } from './../../core/models/Olympic';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Chart, registerables } from 'chart.js';
+import { Chart, ChartEvent, registerables } from 'chart.js';
 Chart.register(...registerables);
 import { OlympicService } from 'src/app/core/services/olympic.service';
 
@@ -73,9 +73,13 @@ export class HomeComponent implements OnInit {
       options: {
         scales: {
         },
-        onClick: (e) => {
-          console.log(e);
-          this.router.navigateByUrl(`coutries/1`).then();
+        onClick: (e: ChartEvent, olympicCountries: any[]) => {
+          let clikedElemetIndex;
+          const nativeEvent = e.native as MouseEvent;
+          if (olympicCountries.length > 0) {
+            clikedElemetIndex = olympicCountries[0].index;
+          }
+          this.router.navigateByUrl(`countries/${clikedElemetIndex + 1}`).then();
         }
       }
     });

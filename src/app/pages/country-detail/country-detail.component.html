@@ -1,6 +1,17 @@
-<div>
-    <p>{{ olympicCountry.country }}</p>
-    <div *ngFor="let item of olympicCountry.participations">
-        <div>id: {{ item.id }}, year: {{ item.year }}, city: {{ item.city }}, medalsCount: {{ item.medalsCount }}, athleteCount: {{ item.athleteCount }} </div>
+<div class="olympic">
+    <div *ngIf="errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <header><h1>{{ countryName }}</h1></header>
+    <div class="section">
+        <div class="article">Number Of Entries : {{ numberOfEntries }}</div>
+        <div class="article">Total Number Medals : {{ totalNumberOfMedals }}</div>
+        <div class="article">Total Number Of Athletes : {{ totalNumberOfAthletes }}</div>
+    </div>
+    <div class="myChart">
+        <canvas id="myChartJs">
+
+        </canvas>
     </div>
 </div>
