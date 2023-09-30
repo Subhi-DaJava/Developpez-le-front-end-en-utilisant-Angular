@@ -74,10 +74,10 @@ export class CountryDetailComponent implements OnInit {
         datasets: [{
           label: this.countryName,
           fill: false,
-          backgroundColor: "rgba(0,0,255,1.0)",
-          borderColor: "rgba(0,0,255,0.1)",
+          backgroundColor: "rgba(0,0,255, 1.0)",
+          borderColor: "rgba(0,0,255,0.3)",
           data: this.totalMedalsPerOlympic,
-          borderWidth: 1
+          borderWidth: 2
         }]
       },
       options: {

@@ -15,21 +15,22 @@
         font-weight: 500;
         font-size: 20px;
         margin-bottom: 30px;
-        width: 100%; 
         .article {
             box-sizing: border-box;
             border: solid 1px;
-            margin: auto;
+            margin: 0;
+            margin-right: 10px;
             margin-bottom: 20px;
-            padding: 10px 3px;
+            padding: 5px 5px;
             border-radius: 5px;
-            height: 60px;
             h4 {
+                color: #858484;
                 margin: 2px;
             }
             p {
                 margin: 0;
                 text-align: center;
+                font-weight: bold;
             }
 
         }
@@ -40,7 +41,7 @@
             width: 30%;
             margin: 0;
             .article {
-                height: 25%;
+                height: 30%;
                 padding: 1px 1px;
                 margin: 2px;
             }
@@ -53,12 +54,13 @@
         background: rgb(21, 174, 169);
         margin-bottom: 20px;
         text-align: center;
-        padding: 5px 5px;
         border-radius: 5px;
-        width: 40%;
+        width: auto;
         h1 {
             color: white;
             font-size: 20px;
+            display: inline-block;
+             padding: 2px 5px;
             margin: 0
         }
         @media screen and (max-width: 768px) { // break point of telephone,

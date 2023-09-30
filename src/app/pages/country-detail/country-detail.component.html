@@ -5,15 +5,16 @@
 
     <header><h1>{{ countryName }}</h1></header>
     <div *ngIf="!errorMessage" class="section">
-        <div class="article">Number Of Entries : {{ numberOfEntries }}</div>
-        <div class="article">Total Number Medals : {{ totalNumberOfMedals }}</div>
-        <div class="article">Total Number Of Athletes : {{ totalNumberOfAthletes }}</div>
+        <div class="article"> <h4>Number Of Entries</h4>  <p>{{ numberOfEntries }}</p></div>
+        <div class="article"> <h4>Total Number Medals</h4> <p>{{ totalNumberOfMedals }}</p> </div>
+        <div class="article"> <h4>Total Number Of Athletes</h4> <p>{{ totalNumberOfAthletes }}</p> </div>
     </div>
     <div class="myChart">
         <canvas id="myChartJsLine">
 
         </canvas>
     </div>
+    <div class="date">Dates</div>
 
     <button routerLink="/">Go Back To Home</button>
 </div>
