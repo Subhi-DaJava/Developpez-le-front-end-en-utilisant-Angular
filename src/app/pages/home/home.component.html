@@ -2,11 +2,14 @@
     <div *ngIf="errorMessage">
         {{ errorMessage }}
     </div>
+    <div *ngIf="loading">
+        <p>Loadinggggg</p>
+    </div>
 
     <header><h1>Modals per Country</h1></header>
     <div class="section">
-        <div class="article">Number of Olympics : {{ totolCounterNumberOfOlympics }}</div>
-        <div class="article">Number of Countries : {{ countries.length }}</div>
+        <div class="article"> <h4>Number of Olympics</h4> <p>{{ totolCounterNumberOfOlympics }}</p></div>
+        <div class="article"> <h4>Number of Countries</h4> <p>{{ countries.length }}</p></div>
     </div>
     <div class="myChart">
         <canvas id="myChartJs">

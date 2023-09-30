@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OlympicCountry } from 'src/app/core/models/Olympic';
 import { Chart, registerables } from 'chart.js';
+import { Participation } from 'src/app/core/models/Participation';
 Chart.register(...registerables);
 
 @Component({
@@ -24,38 +25,49 @@ export class CountryDetailComponent implements OnInit {
   constructor(private route: ActivatedRoute, private olympicService: OlympicService, private router: Router) { }
 
   ngOnInit(): void {
-    const countyId = +this.route.snapshot.params['id']; // cast the type the segment of route (id: string) to number
+    const countryId = +this.route.snapshot.params['id']; // cast the type the segment of route (id: string) to number
+    this.getCountryById(countryId);
+  }
 
+  private getCountryById(countryId: number) {
     this.olympicService.getOlympics().subscribe({
       next: olympics => {
-        const countryById = olympics.find(o => o.id === countyId);
-        if (!countryById) {
-          throw new Error('Country Olympic not found!');
-        } else {
-          this.olympicCountry = countryById;
-          this.countryName = this.olympicCountry.country;
-          this.numberOfEntries = this.olympicCountry.participations.length;
-          this.totalNumberOfMedals = this.olympicCountry
-            .participations.map(participation => participation.medalsCount).reduce((currentMedals, total) => { return currentMedals + total; }, 0);
-          this.totalNumberOfAthletes = this.olympicCountry
-            .participations.map(participation => participation.athleteCount).reduce((athletsPerOlympics, total) => {
-              return athletsPerOlympics + total;
-            }, 0);
-          this.yearsOfOlympics = this.olympicCountry
-            .participations.map(participation => participation.year).flat();
-          this.totalMedalsPerOlympic = this.olympicCountry
-            .participations.map(participation => participation.medalsCount).flat();
+        if (olympics !== undefined && olympics.length > 0) {
+          const countryById = olympics.find(o => o.id === countryId);
+          if (!countryById) {
+            throw new Error('Country Olympic not found!');
+          } else {
+            this.olympicCountry = countryById;
+            this.countryName = this.olympicCountry.country;
+            this.numberOfEntries = this.olympicCountry.participations.length;
+            this.totalNumberOfMedals = this.calculateTotalMedals(this.olympicCountry.participations);
+            this.totalNumberOfAthletes = this.calculateTotalAthletes(this.olympicCountry.participations);
+            this.yearsOfOlympics = this.olympicCountry.participations.flatMap(participation => participation.year);
+            this.totalMedalsPerOlympic = this.olympicCountry.participations.flatMap(participation => participation.medalsCount);
+
             this.renderCharJs();
+          }
+
         }
       }, error: err => {
+        this.errorMessage = err.console.error.message;
         console.log('An error occurred while loading data.', err.error.message);
       }
 
     });
   }
 
+  private calculateTotalMedals(participations: Participation[]): number {
+    return participations.map(participation => participation.medalsCount).reduce((currentMedals, total) => { return currentMedals + total; }, 0);
+  }
+  private calculateTotalAthletes(participations: Participation[]): number {
+    return participations.map(participation => participation.athleteCount).reduce((athletsPerOlympics, total) => {
+      return athletsPerOlympics + total;
+    }, 0);
+  }
+
   renderCharJs() {
-    new Chart('myChartJs', {
+    const char = new Chart('myChartJsLine', {
       type: 'line',
       data: {
         labels: this.yearsOfOlympics,
@@ -67,8 +79,13 @@ export class CountryDetailComponent implements OnInit {
           data: this.totalMedalsPerOlympic,
           borderWidth: 1
         }]
+      },
+      options: {
+        maintainAspectRatio:false
       }
     });
+
+    char.render();
   }
 
 }

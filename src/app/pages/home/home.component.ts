@@ -18,10 +18,15 @@ export class HomeComponent implements OnInit {
   totalMedals: number[] = [];
   totalParticipation: number[] = [];
   totolCounterNumberOfOlympics!: number;
+  loading = true;
 
   constructor(private olympicService: OlympicService, private router: Router) { }
 
   ngOnInit(): void {
+    this.getOlympics();
+  }
+  
+  private getOlympics() {
     this.olympicService.getOlympics().subscribe({
       next: olympics => {
         this.olympics$ = olympics;
@@ -32,6 +37,7 @@ export class HomeComponent implements OnInit {
           this.totalParticipation = this.olympics$.map(o => o.participations.length);
           this.totalMedals = this.olympics$.map(o => this.getTotalMedals(o));
           this.totolCounterNumberOfOlympics = this.countTotalOlympics(this.olympics$);
+          setTimeout(() => {this.loading = false;}, 2000);
           this.renderCharJs();
         }
       }, error: err => {
@@ -59,7 +65,7 @@ export class HomeComponent implements OnInit {
   }
 
   renderCharJs() {
-    new Chart('myChartJs', {
+    const chart = new Chart('myChartJs', {
       type: 'pie',
       data: {
         labels: this.countries,
@@ -71,11 +77,11 @@ export class HomeComponent implements OnInit {
         }]
       },
       options: {
-        scales: {
-        },
+        scales: {},
+        responsive: true,
+        maintainAspectRatio:false,
         onClick: (e: ChartEvent, olympicCountries: any[]) => {
           let clikedElemetIndex;
-          const nativeEvent = e.native as MouseEvent;
           if (olympicCountries.length > 0) {
             clikedElemetIndex = olympicCountries[0].index;
           }
@@ -83,5 +89,7 @@ export class HomeComponent implements OnInit {
         }
       }
     });
+
+    chart.render();
   }
 }
