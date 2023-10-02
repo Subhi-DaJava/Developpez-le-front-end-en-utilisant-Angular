@@ -2,10 +2,12 @@
     <div *ngIf="errorMessage">
         {{ errorMessage }}
     </div>
-    <div *ngIf="loading">
-        <p>Loadinggggg</p>
+    <div class="img_logo">
+        <img src="assets/images/P2_banner.png" alt="banner_image">
     </div>
-
+    <div *ngIf="loading" class="loading">
+        <p>Loading..... </p>
+    </div>
     <header><h1>Modals per Country</h1></header>
     <div class="section">
         <div class="article"> <h4>Number of Olympics</h4> <p>{{ totolCounterNumberOfOlympics }}</p></div>

@@ -1,7 +1,7 @@
 .olympic {
     box-sizing: border-box;
     width: 60%;
-    margin: 30px auto;
+    margin: 20px auto;
     padding: 10px 30px;
     box-shadow: lightgray 4px 4px 20px;
     display: flex;
@@ -10,6 +10,20 @@
     align-items: center;
     margin-top: 5%;
     
+    .loading {
+        color: blue;
+        font-size: 20px;
+    }
+    .img_logo {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        img {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+    }
     .section {
         display: flex;
         font-weight: 500;
@@ -50,7 +64,7 @@
     }
 
     header {
-        margin-top: 20px;
+        margin-top: 40px;
         background: rgb(21, 174, 169);
         margin-bottom: 20px;
         text-align: center;
