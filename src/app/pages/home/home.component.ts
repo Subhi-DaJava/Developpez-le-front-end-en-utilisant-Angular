@@ -11,6 +11,7 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
+
   errorMessage!: string;
   olympics$!: OlympicCountry[];
 
@@ -26,19 +27,24 @@ export class HomeComponent implements OnInit {
     this.getOlympics();
   }
   
+
+  /**
+   * Retrieves and processes Olympic Countries data from the Olympic Service
+   * Populates various properties, including country names, participation counts, total medals
+   * And calls the `renderChartJs()` method
+   */
   private getOlympics() {
     this.olympicService.getOlympics().subscribe({
       next: olympics => {
         this.olympics$ = olympics;
 
         if (this.olympics$ && this.olympics$.length > 0) {
-
           this.countries = this.olympics$.map(o => o.country);
           this.totalParticipation = this.olympics$.map(o => o.participations.length);
           this.totalMedals = this.olympics$.map(o => this.getTotalMedals(o));
           this.totolCounterNumberOfOlympics = this.countTotalOlympics(this.olympics$);
-          setTimeout(() => {this.loading = false;}, 2000);
-          this.renderCharJs();
+          setTimeout(() => {this.loading = false;}, 500);
+          this.renderChartJs();
         }
       }, error: err => {
         this.errorMessage = err.error;
@@ -48,10 +54,20 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  /**
+   * Calculates the total number of medals won by an Olympic country
+   * @param country The Olympic country
+   * @returns Total number of medals won by the country
+   */
   private getTotalMedals(country: OlympicCountry): number {
     return country.participations.map(participation => participation.medalsCount).reduce((medals, total) => { return medals + total; }, 0);
   }
 
+  /**
+   * Counts the total number of participations
+   * @param countries An array (a list) of Olympic countries with the total count of participation
+   * @returns 
+   */
   private countTotalOlympics(countries: OlympicCountry[]): number {
     const uniqueYears = new Set<number>(
       countries
@@ -63,8 +79,12 @@ export class HomeComponent implements OnInit {
 
     return uniqueYears.size;
   }
+  /**
+   * Renders a pie chart using Chart.js with data from Olympic countries
+   * The chart displays the total medals for each country, and clicking on a segment navigates to the detailed view of the selected country
+   */
 
-  renderCharJs() {
+  renderChartJs() {
     const chart = new Chart('myChartJs', {
       type: 'pie',
       data: {

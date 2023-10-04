@@ -21,14 +21,23 @@ export class CountryDetailComponent implements OnInit {
   yearsOfOlympics!: number[];
   totalMedalsPerOlympic!: number[];
   errorMessage!: string;
+  loading = true;
 
   constructor(private route: ActivatedRoute, private olympicService: OlympicService, private router: Router) { }
 
   ngOnInit(): void {
+    // Retrieves the country identifier from the current route's snapshot parameters
     const countryId = +this.route.snapshot.params['id']; // cast the type the segment of route (id: string) to number
     this.getCountryById(countryId);
   }
 
+
+  /**
+  * Retrieves information about an Olympic country by its identifier and simulate the state of the application with `loading` attribute
+  * And calls the `renderChartJs()` method
+  * @param countryId identifier of the Olympic country to retrieve
+  * @Error Error if the Olympic country is not found
+  */
   private getCountryById(countryId: number) {
     this.olympicService.getOlympics().subscribe({
       next: olympics => {
@@ -44,8 +53,8 @@ export class CountryDetailComponent implements OnInit {
             this.totalNumberOfAthletes = this.calculateTotalAthletes(this.olympicCountry.participations);
             this.yearsOfOlympics = this.olympicCountry.participations.flatMap(participation => participation.year);
             this.totalMedalsPerOlympic = this.olympicCountry.participations.flatMap(participation => participation.medalsCount);
-
-            this.renderCharJs();
+            setTimeout(() => { this.loading = false; }, 500);
+            this.renderChartJs();
           }
 
         }
@@ -57,16 +66,30 @@ export class CountryDetailComponent implements OnInit {
     });
   }
 
+  /**
+   * Calculates the total number of medals from a list of Olympic participations
+   * @param participations An array (a list) of Olympic participations
+   * @returns Total number of medals
+   */
   private calculateTotalMedals(participations: Participation[]): number {
     return participations.map(participation => participation.medalsCount).reduce((currentMedals, total) => { return currentMedals + total; }, 0);
   }
+
+  /**
+   * Calculates the total number of athletes from a list of Olympic participations
+   * @param participations An array(a list) of Olympic participations
+   * @returns Total number of athletes
+   */
   private calculateTotalAthletes(participations: Participation[]): number {
     return participations.map(participation => participation.athleteCount).reduce((athletsPerOlympics, total) => {
       return athletsPerOlympics + total;
     }, 0);
   }
 
-  renderCharJs() {
+  /**
+   * Renders a line chart using Chart.js librarie to display the total medals won by year for a specific Olympic country
+   */
+  renderChartJs() {
     const char = new Chart('myChartJsLine', {
       type: 'line',
       data: {
@@ -81,7 +104,7 @@ export class CountryDetailComponent implements OnInit {
         }]
       },
       options: {
-        maintainAspectRatio:false
+        maintainAspectRatio: false
       }
     });
 

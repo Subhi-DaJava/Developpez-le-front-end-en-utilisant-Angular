@@ -22,3 +22,9 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Country Detail:
 ![Alt text](image-1.png) 
+
+## Home Page (Mobile Device):
+![Alt text](image-2.png)
+
+## Country Detail Page (Mobile Device):
+![Alt text](image-3.png)

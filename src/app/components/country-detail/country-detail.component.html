@@ -2,7 +2,9 @@
     <div *ngIf="errorMessage">
         {{ errorMessage }}
     </div>
-
+    <div *ngIf="loading" class="loading">
+        <p>Loading..... </p>
+    </div>
     <header><h1>{{ countryName }}</h1></header>
     <div *ngIf="!errorMessage" class="section">
         <div class="article"> <h4>Number Of Entries</h4>  <p>{{ numberOfEntries }}</p></div>
