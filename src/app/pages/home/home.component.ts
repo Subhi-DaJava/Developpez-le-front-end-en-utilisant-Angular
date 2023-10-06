@@ -46,12 +46,14 @@ export class HomeComponent implements OnInit {
           setTimeout(() => {this.loading = false;}, 500); // Simulate the loading state of the application for testing purposes
           this.renderChartJs();
         }
+      
       }, error: err => {
         this.errorMessage = err.error;
         console.log('An error occurred while loading data.');
       }
 
     });
+
   }
 
   /**

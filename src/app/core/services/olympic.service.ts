@@ -10,7 +10,6 @@ import { catchError, tap } from 'rxjs/operators';
 export class OlympicService {
   private olympicUrl = './assets/mock/olympic.json';
   private olympics$ = new BehaviorSubject<OlympicCountry[]>([]);
-  private country!: OlympicCountry;
   constructor(private http: HttpClient) { }
 
   loadInitialData() {
