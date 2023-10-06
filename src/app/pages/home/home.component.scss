@@ -1,8 +1,8 @@
 .olympic {
     box-sizing: border-box;
     width: 60%;
-    margin: 20px auto;
-    padding: 10px 30px;
+    margin: 10px auto;
+    padding: 0px 10px;
     box-shadow: lightgray 4px 4px 20px;
     display: flex;
     flex-direction: column;
@@ -48,13 +48,17 @@
         @media screen and (max-width: 768px) { // break point of telephone,
             flex-direction: column;
             font-size: 10px;
-            width: 30%;
+            width: 100%;
             margin: 0;
+            padding: 0;
+            margin-left: 65%;
             .article {
-                height: 30%;
-                padding: 1px 1px;
+                text-align: center;
+                width: 33%;
+                padding: 0px 1px;
                 margin: 2px;
             }
+
         }
 
     }
@@ -74,7 +78,6 @@
             margin: 0
         }
         @media screen and (max-width: 768px) { // break point of telephone,
-           width: 30%;
            padding: 0;
            margin: 2px;
            height: 100%;
@@ -88,6 +91,13 @@
         margin: auto;
         box-sizing: border-box;
         width: 50%;
+    }
+
+    @media screen and (max-width: 768px) {
+        body {
+            width: 100%;
+        }
+
     }
 
 }

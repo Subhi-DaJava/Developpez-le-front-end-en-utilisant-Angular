@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
           this.totalParticipation = this.olympics$.map(o => o.participations.length);
           this.totalMedals = this.olympics$.map(o => this.getTotalMedals(o));
           this.totolCounterNumberOfOlympics = this.countTotalOlympics(this.olympics$);
-          setTimeout(() => {this.loading = false;}, 500);
+          setTimeout(() => {this.loading = false;}, 500); // Simulate the loading state of the application for testing purposes
           this.renderChartJs();
         }
       }, error: err => {
@@ -86,8 +86,9 @@ export class HomeComponent implements OnInit {
 
   renderChartJs() {
     const chart = new Chart('myChartJs', {
+      // un objet de configuration du graphique
       type: 'pie',
-      data: {
+      data: { //  l'objet de données 
         labels: this.countries,
         datasets: [{
           label: '🥇 Total Medals',
@@ -96,11 +97,10 @@ export class HomeComponent implements OnInit {
           borderWidth: 1
         }]
       },
-      options: {
-        scales: {},
-        responsive: true,
+      options: { // personnaliser le comportement et l'apparence du graphique
+        responsive: true, // permet au graphique de s'adapter à la taille de la fenêtre du navigateur
         maintainAspectRatio:false,
-        onClick: (e: ChartEvent, olympicCountries: any[]) => {
+        onClick: (e: ChartEvent, olympicCountries: any[]) => { // un gestionnaire d'événements qui se déclenche lorsqu'un clic se produit sur le graphique
           let clikedElemetIndex;
           if (olympicCountries.length > 0) {
             clikedElemetIndex = olympicCountries[0].index;
@@ -110,6 +110,6 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    chart.render();
+    chart.render(); //  appelle la méthode render() de l'objet chart, ce qui déclenche le rendu du graphique dans l'élément Canvas spécifié
   }
 }
