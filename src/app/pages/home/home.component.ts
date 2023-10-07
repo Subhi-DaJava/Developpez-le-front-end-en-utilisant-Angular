@@ -2,7 +2,7 @@ import { OlympicCountry } from './../../core/models/Olympic';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ActiveElement, Chart, ChartEvent, registerables } from 'chart.js';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 Chart.register(...registerables);
 import { OlympicService } from 'src/app/core/services/olympic.service';
 
@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   totalMedals: number[] = [];
   totolCounterNumberOfOlympics!: number;
   loading = true;
-  private olympicsSubscription: Subscription | undefined; // Declare a variable to maintain the subscription
+  private destroy$: Subject<void> = new Subject<void>();
 
   constructor(private olympicService: OlympicService, private router: Router) { }
 
@@ -34,24 +34,26 @@ export class HomeComponent implements OnInit, OnDestroy {
    * And calls the `renderChartJs()` method
    */
   private getOlympics() {
-    this.olympicsSubscription = this.olympicService.getOlympics().subscribe({
-      next: olympics => {
-        this.olympics$ = olympics;
+    this.olympicService.getOlympics().pipe(
+      takeUntil(this.destroy$))
+      .subscribe({
+        next: olympics => {
+          this.olympics$ = olympics;
 
-        if (this.olympics$ && this.olympics$.length > 0) {
-          this.countries = this.olympics$.map(o => o.country);
-          this.totalMedals = this.olympics$.map(o => this.getTotalMedals(o));
-          this.totolCounterNumberOfOlympics = this.countTotalOlympics(this.olympics$);
-          setTimeout(() => { this.loading = false; }, 500); // Simulate the loading state of the application for testing purposes
-          this.renderChartJs();
+          if (this.olympics$ && this.olympics$.length > 0) {
+            this.countries = this.olympics$.map(o => o.country);
+            this.totalMedals = this.olympics$.map(o => this.getTotalMedals(o));
+            this.totolCounterNumberOfOlympics = this.countTotalOlympics(this.olympics$);
+            setTimeout(() => { this.loading = false; }, 500); // Simulate the loading state of the application for testing purposes
+            this.renderChartJs();
+          }
+
+        }, error: err => {
+          this.errorMessage = err.error;
+          console.log('An error occurred while loading data.');
         }
 
-      }, error: err => {
-        this.errorMessage = err.error;
-        console.log('An error occurred while loading data.');
-      }
-
-    });
+      });
 
   }
 
@@ -87,9 +89,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private renderChartJs(): void {
     const chart = new Chart('myChartJs', {
-      // un objet de configuration du graphique
+      // A chart configuration object
       type: 'pie',
-      data: { //  l'objet de données 
+      data: { //  Data object 
         labels: this.countries,
         datasets: [{
           label: '🥇 Total Medals',
@@ -98,13 +100,13 @@ export class HomeComponent implements OnInit, OnDestroy {
           borderWidth: 1
         }]
       },
-      options: { // customize the behavior and appearance of the chart
+      options: { // Customize the behavior and appearance of the chart
         responsive: true, // allows the chart to fit the size of the browser window
         maintainAspectRatio: false,
         onClick: (e: ChartEvent, elements: ActiveElement[]) => { // an event handler that fires when a click occurs on the chart
           let clikedElemetIndex: number | undefined;
           if (elements.length > 0) {
-            // Votre logique pour extraire l'index de l'élément cliqué ici
+            // Extract the index of the element clicked
             clikedElemetIndex = elements[0].index;
           }
           if (clikedElemetIndex) {
@@ -115,13 +117,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
 
-    chart.render(); // calls the chart object's render() method, which triggers rendering of the chart in the specified Canvas element
+    chart.render(); // Calls the chart object's render() method, which triggers rendering of the chart in the specified Canvas element
   }
 
   ngOnDestroy(): void {
-    if (this.olympicsSubscription) {
-      this.olympicsSubscription.unsubscribe(); // Unsubscribe when the component is destroyed
-    }
+    this.destroy$.next(); // Inform subscriptions that the component is being destroyed.
+    this.destroy$.complete(); // All subscriptions to this topic are automatically unsubscribed by calling complete()
   }
 
 }
