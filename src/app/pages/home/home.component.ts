@@ -107,7 +107,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             // Votre logique pour extraire l'index de l'élément cliqué ici
             clikedElemetIndex = elements[0].index;
           }
-          if (clikedElemetIndex) {
+          if (clikedElemetIndex !== undefined) {
             this.router.navigateByUrl(`countries/${clikedElemetIndex + 1}`).then();
           }
 
