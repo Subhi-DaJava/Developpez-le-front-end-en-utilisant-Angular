@@ -104,12 +104,12 @@ export class HomeComponent implements OnInit, OnDestroy {
         responsive: true, // allows the chart to fit the size of the browser window
         maintainAspectRatio: false,
         onClick: (e: ChartEvent, elements: ActiveElement[]) => { // an event handler that fires when a click occurs on the chart
-          let clikedElemetIndex: number | undefined;
+          let clikedElemetIndex;
           if (elements.length > 0) {
             // Extract the index of the element clicked
             clikedElemetIndex = elements[0].index;
           }
-          if (clikedElemetIndex) {
+          if (clikedElemetIndex !== undefined) {
             this.router.navigateByUrl(`countries/${clikedElemetIndex + 1}`).then();
           }
 
