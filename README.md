@@ -6,7 +6,6 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Getting Started
 
 Before you begin, make sure to install the required dependencies by running `npm install`. 
-<br /> Additionally, install `chart.js` for graphics using the command `npm install chart.js`. 
 <br /> (Note: Ensure that `Node.js` is installed locally on your machine.)
 
 ## Development server
