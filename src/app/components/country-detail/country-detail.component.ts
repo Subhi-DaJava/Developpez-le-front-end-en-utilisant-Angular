@@ -1,9 +1,10 @@
 import { OlympicService } from 'src/app/core/services/olympic.service';
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { OlympicCountry } from 'src/app/core/models/Olympic';
 import { Chart, registerables } from 'chart.js';
 import { Participation } from 'src/app/core/models/Participation';
+import { Subscription } from 'rxjs';
 Chart.register(...registerables);
 
 @Component({
@@ -11,7 +12,7 @@ Chart.register(...registerables);
   templateUrl: './country-detail.component.html',
   styleUrls: ['./country-detail.component.scss']
 })
-export class CountryDetailComponent implements OnInit {
+export class CountryDetailComponent implements OnInit, OnDestroy {
 
   olympicCountry!: OlympicCountry;
   countryName!: string;
@@ -22,8 +23,9 @@ export class CountryDetailComponent implements OnInit {
   totalMedalsPerOlympic!: number[];
   errorMessage!: string;
   loading = true;
+  private olympicsSubscription: Subscription | undefined; // Declare a variable to maintain the subscription
 
-  constructor(private route: ActivatedRoute, private olympicService: OlympicService, private router: Router) { }
+  constructor(private route: ActivatedRoute, private olympicService: OlympicService) { }
 
   ngOnInit(): void {
     // Retrieves the country identifier from the current route's snapshot parameters
@@ -39,7 +41,7 @@ export class CountryDetailComponent implements OnInit {
   * @Error Error if the Olympic country is not found
   */
   private getCountryById(countryId: number) {
-    this.olympicService.getOlympics().subscribe({
+    this.olympicsSubscription = this.olympicService.getOlympics().subscribe({
       next: olympics => {
         if (olympics !== undefined && olympics.length > 0) {
           const countryById = olympics.find(o => o.id === countryId);
@@ -53,7 +55,7 @@ export class CountryDetailComponent implements OnInit {
             this.totalNumberOfAthletes = this.calculateTotalAthletes(this.olympicCountry.participations);
             this.yearsOfOlympics = this.olympicCountry.participations.flatMap(participation => participation.year);
             this.totalMedalsPerOlympic = this.olympicCountry.participations.flatMap(participation => participation.medalsCount);
-            setTimeout(() => { this.loading = false; }, 500);
+            setTimeout(() => { this.loading = false; }, 500); // Simulate the loading state of the application for testing purposes
             this.renderChartJs();
           }
 
@@ -89,7 +91,7 @@ export class CountryDetailComponent implements OnInit {
   /**
    * Renders a line chart using Chart.js librarie to display the total medals won by year for a specific Olympic country
    */
-  renderChartJs() {
+  private renderChartJs(): void {
     const char = new Chart('myChartJsLine', {
       type: 'line',
       data: {
@@ -109,6 +111,12 @@ export class CountryDetailComponent implements OnInit {
     });
 
     char.render();
+  }
+
+  ngOnDestroy(): void {
+    if (this.olympicsSubscription) {
+      this.olympicsSubscription.unsubscribe(); // Unsubscribe when the component is destroyed
+    }
   }
 
 }

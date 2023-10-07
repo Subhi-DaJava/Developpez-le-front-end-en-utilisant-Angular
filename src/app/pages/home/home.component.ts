@@ -1,7 +1,8 @@
 import { OlympicCountry } from './../../core/models/Olympic';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Chart, ChartEvent, registerables } from 'chart.js';
+import { ActiveElement, Chart, ChartEvent, registerables } from 'chart.js';
+import { Subscription } from 'rxjs';
 Chart.register(...registerables);
 import { OlympicService } from 'src/app/core/services/olympic.service';
 
@@ -10,23 +11,22 @@ import { OlympicService } from 'src/app/core/services/olympic.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   errorMessage!: string;
   olympics$!: OlympicCountry[];
-
   countries: string[] = [];
   totalMedals: number[] = [];
-  totalParticipation: number[] = [];
   totolCounterNumberOfOlympics!: number;
   loading = true;
+  private olympicsSubscription: Subscription | undefined; // Declare a variable to maintain the subscription
 
   constructor(private olympicService: OlympicService, private router: Router) { }
 
   ngOnInit(): void {
     this.getOlympics();
   }
-  
+
 
   /**
    * Retrieves and processes Olympic Countries data from the Olympic Service
@@ -34,19 +34,18 @@ export class HomeComponent implements OnInit {
    * And calls the `renderChartJs()` method
    */
   private getOlympics() {
-    this.olympicService.getOlympics().subscribe({
+    this.olympicsSubscription = this.olympicService.getOlympics().subscribe({
       next: olympics => {
         this.olympics$ = olympics;
 
         if (this.olympics$ && this.olympics$.length > 0) {
           this.countries = this.olympics$.map(o => o.country);
-          this.totalParticipation = this.olympics$.map(o => o.participations.length);
           this.totalMedals = this.olympics$.map(o => this.getTotalMedals(o));
           this.totolCounterNumberOfOlympics = this.countTotalOlympics(this.olympics$);
-          setTimeout(() => {this.loading = false;}, 500); // Simulate the loading state of the application for testing purposes
+          setTimeout(() => { this.loading = false; }, 500); // Simulate the loading state of the application for testing purposes
           this.renderChartJs();
         }
-      
+
       }, error: err => {
         this.errorMessage = err.error;
         console.log('An error occurred while loading data.');
@@ -86,7 +85,7 @@ export class HomeComponent implements OnInit {
    * The chart displays the total medals for each country, and clicking on a segment navigates to the detailed view of the selected country
    */
 
-  renderChartJs() {
+  private renderChartJs(): void {
     const chart = new Chart('myChartJs', {
       // un objet de configuration du graphique
       type: 'pie',
@@ -99,19 +98,30 @@ export class HomeComponent implements OnInit {
           borderWidth: 1
         }]
       },
-      options: { // personnaliser le comportement et l'apparence du graphique
-        responsive: true, // permet au graphique de s'adapter à la taille de la fenêtre du navigateur
-        maintainAspectRatio:false,
-        onClick: (e: ChartEvent, olympicCountries: any[]) => { // un gestionnaire d'événements qui se déclenche lorsqu'un clic se produit sur le graphique
-          let clikedElemetIndex;
-          if (olympicCountries.length > 0) {
-            clikedElemetIndex = olympicCountries[0].index;
+      options: { // customize the behavior and appearance of the chart
+        responsive: true, // allows the chart to fit the size of the browser window
+        maintainAspectRatio: false,
+        onClick: (e: ChartEvent, elements: ActiveElement[]) => { // an event handler that fires when a click occurs on the chart
+          let clikedElemetIndex: number | undefined;
+          if (elements.length > 0) {
+            // Votre logique pour extraire l'index de l'élément cliqué ici
+            clikedElemetIndex = elements[0].index;
           }
-          this.router.navigateByUrl(`countries/${clikedElemetIndex + 1}`).then();
+          if (clikedElemetIndex) {
+            this.router.navigateByUrl(`countries/${clikedElemetIndex + 1}`).then();
+          }
+
         }
       }
     });
 
-    chart.render(); //  appelle la méthode render() de l'objet chart, ce qui déclenche le rendu du graphique dans l'élément Canvas spécifié
+    chart.render(); // calls the chart object's render() method, which triggers rendering of the chart in the specified Canvas element
   }
+
+  ngOnDestroy(): void {
+    if (this.olympicsSubscription) {
+      this.olympicsSubscription.unsubscribe(); // Unsubscribe when the component is destroyed
+    }
+  }
+
 }
